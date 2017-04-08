@@ -7,9 +7,10 @@ if (empty($_GET['mime']) OR empty($_GET['token'])) {
 // Set operation params
 $mime = filter_var($_GET['mime']);
 $ext = str_replace(['/', 'x-'], '', strstr($mime, '/'));
-$url = base64_decode(filter_var($_GET['token']));
+$url = base64_decode(urldecode(filter_var($_GET['token'])));
 $name = urldecode($_GET['title']) . '.' . $ext;
 $size = filter_var($_GET['size']);
+
 
 // Fetch and serve
 if ($url) {
@@ -24,7 +25,6 @@ if ($url) {
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         header('Pragma: public');
     }
-
     readfile($url);
     exit;
 }

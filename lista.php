@@ -33,7 +33,7 @@
                             'mime=' . $value['type'] .
                             '&title=' . urlencode($arrRes['title']) .
                             '&size=' . $value['size'] .
-                            '&token=' . base64_encode($value['url']) . '">' .
+                            '&token=' . base64_encode(urlencode($value['url'])) . '">' .
                         $value['type'] . ' | ' . $value['format'] . '</a> => ' . $value['formatedSize'];
                     echo '</li>';
                 } ?>
