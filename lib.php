@@ -274,7 +274,7 @@ class YouTubeDownloader {
 
     // options | deep_links | append_redirector
     public function getDownloadLinks($id, $selector = false) {
-        $result = array();
+        $links = array();
         $instructions = array();
 
         // you can input HTML of /watch? page directory instead of id
@@ -312,6 +312,9 @@ class YouTubeDownloader {
             foreach ($parts as $p) {
                 $query = str_replace('\u0026', '&', $p);
                 parse_str($query, $arr);
+                
+                if(!isset($arr['url']))
+                    return false;
                 $url = $arr['url'];
 
                 if (isset($arr['sig'])) {
@@ -334,23 +337,19 @@ class YouTubeDownloader {
                 $itag = $arr['itag'];
                 $format = isset($this->itag_info[$itag]) ? $this->itag_info[$itag] : 'Unknown';
                 $type = explode(';', $arr['type']);
+                $type = $type[0];
                 $size = $this->getSize($url);
+                $formatedSize = $this->formatBytes($size);
 
-                $result[$itag] = array(
-                    'url' => $url,
-                    'format' => $format,
-                    'type' => $type[0],
-                    'size' => $size,
-                    'formatedSize' => $this->formatBytes($size)
-                );
+                $links[$itag] = compact('url', 'format', 'type', 'size', 'formatedSize');
             }
         }
 
         // do we want all links or just select few?
         if ($selector) {
-            return $this->selectFirst($result, $selector);
+            return $this->selectFirst($links, $selector);
         }
-        $result = array('title' => $title, 'thumbnail_url' => $thumbnail_url, 'links' => $result );
+        $result = compact('title', 'thumbnail_url', 'links');
         return $result;
     }
 
